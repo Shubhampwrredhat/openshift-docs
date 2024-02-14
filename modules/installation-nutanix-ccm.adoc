@@ -21,29 +21,25 @@ Installations on Nutanix require additional `ConfigMap` and `Secret` resources t
 $ cd <path_to_installation_directory>/manifests
 ----
 
-. Create a file with the name `openshift-cloud-controller-manager-nutanix-credentials-credentials.yaml` and add the following information:
+. Verify the file with the name `openshift-cloud-controller-manager-nutanix-credentials-credentials.yaml` has the correct information in base64 format:
 +
-[source,yaml]
+[source,terminal]
 ----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nutanix-credentials
-  namespace: openshift-cloud-controller-manager
-type: Opaque
-stringData:
-  credentials: "[{
-    \"type\":\"basic_auth\",
-    \"data\":{
-          \"prismCentral\":{
-            \"username\":\"<username_for_prism_central>\", <1>
-            \"password\":\"<password_for_prism_central>\"}, <2>
-            \"prismElements\":null
-          }
-    }]"
+$ cat openshift-cloud-controller-manager-nutanix-credentials-credentials.yaml | grep "credentials:" 
 ----
-<1> Specify the Prism Central username.
-<2> Specify the Prism Central password.
++
+. Sample Output:
+[source,terminal]
+----
+credentials: <base64-encoded-string>
+----
+
+. Verify the `base64-encoded-string` contains correct values:
++
+[source,terminal]
+----
+$  cat openshift-cloud-controller-manager-nutanix-credentials-credentials.yaml | grep "credentials:" | awk '{print $2}' | base64 -d | jq
+----
 
 . Create the `cloud-conf` `ConfigMap` file with the name `openshift-cloud-controller-manager-cloud-config.yaml` and add the following information:
 +
